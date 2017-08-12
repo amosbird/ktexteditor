@@ -61,8 +61,11 @@ public:
     bool commandInsertFromBelow();
 
     bool commandDeleteWord();
+    bool commandDeleteWordBackward();
     bool commandDeleteLine();
+    bool commandDeleteLineBackward();
     bool commandNewLine();
+    bool commandDeleteChar();
     bool commandDeleteCharBackward();
 
     bool commandIndent();

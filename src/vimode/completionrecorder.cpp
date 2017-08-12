@@ -41,7 +41,7 @@ void CompletionRecorder::logCompletionEvent(const Completion &completion)
 {
     // Ctrl-space is a special code that means: if you're replaying a macro, fetch and execute
     // the next logged completion.
-    static const QKeyEvent CompletionEvent(QKeyEvent::KeyPress, Qt::Key_Space, Qt::ControlModifier, QStringLiteral(" "));
+    static const QKeyEvent CompletionEvent(QKeyEvent::KeyPress, Qt::Key_Enter, Qt::ControlModifier, QStringLiteral(" "));
 
     if (m_viInputModeManager->macroRecorder()->isRecording()) {
         m_viInputModeManager->macroRecorder()->record(CompletionEvent);

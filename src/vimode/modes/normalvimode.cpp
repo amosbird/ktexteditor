@@ -1815,7 +1815,7 @@ bool NormalViMode::commandGoToNextJump()
     KTextEditor::Cursor c = getNextJump(m_view->cursorPosition());
     updateCursor(c);
 
-    return true;
+    return commandCenterView(false);
 }
 
 bool NormalViMode::commandGoToPrevJump()
@@ -1823,7 +1823,7 @@ bool NormalViMode::commandGoToPrevJump()
     KTextEditor::Cursor c = getPrevJump(m_view->cursorPosition());
     updateCursor(c);
 
-    return true;
+    return commandCenterView(false);
 }
 
 bool NormalViMode::commandSwitchToLeftView()
@@ -1949,6 +1949,11 @@ bool NormalViMode::commandCloseNocheck()
 bool NormalViMode::commandCloseWrite()
 {
     return executeKateCommand(QStringLiteral("wq"));
+}
+
+bool NormalViMode::commandWrite()
+{
+  return executeKateCommand(QStringLiteral("w"));
 }
 
 bool NormalViMode::commandCollapseLocal()
@@ -3494,6 +3499,16 @@ Range NormalViMode::textObjectInnerComma()
     return textObjectComma(true);
 }
 
+Range NormalViMode::textObjectALine()
+{
+    return textObjectLine(false);
+}
+
+Range NormalViMode::textObjectInnerLine()
+{
+    return textObjectLine(true);
+}
+
 // add commands
 // when adding commands here, remember to add them to visual mode too (if applicable)
 void NormalViMode::initializeCommands()
@@ -3554,6 +3569,7 @@ void NormalViMode::initializeCommands()
     ADDCMD("<c-d>", commandScrollHalfPageDown, 0);
     ADDCMD("z.", commandCenterViewOnNonBlank, 0);
     ADDCMD("zz", commandCenterViewOnCursor, 0);
+    ADDCMD("<c-l>", commandCenterViewOnCursor, 0);
     ADDCMD("z<return>", commandTopViewOnNonBlank, 0);
     ADDCMD("zt", commandTopViewOnCursor, 0);
     ADDCMD("z-", commandBottomViewOnNonBlank, 0);
@@ -3565,32 +3581,34 @@ void NormalViMode::initializeCommands()
     ADDCMD("~", commandChangeCase, IS_CHANGE);
     ADDCMD("g~", commandChangeCaseRange, IS_CHANGE | NEEDS_MOTION);
     ADDCMD("g~~", commandChangeCaseLine, IS_CHANGE);
-    ADDCMD("<c-a>", commandAddToNumber, IS_CHANGE);
-    ADDCMD("<c-x>", commandSubtractFromNumber, IS_CHANGE);
     ADDCMD("<c-o>", commandGoToPrevJump, 0);
     ADDCMD("<c-i>", commandGoToNextJump, 0);
 
-    ADDCMD("<c-w>h", commandSwitchToLeftView, 0);
-    ADDCMD("<c-w><c-h>", commandSwitchToLeftView, 0);
-    ADDCMD("<c-w><left>", commandSwitchToLeftView, 0);
-    ADDCMD("<c-w>j", commandSwitchToDownView, 0);
-    ADDCMD("<c-w><c-j>", commandSwitchToDownView, 0);
-    ADDCMD("<c-w><down>", commandSwitchToDownView, 0);
-    ADDCMD("<c-w>k", commandSwitchToUpView, 0);
-    ADDCMD("<c-w><c-k>", commandSwitchToUpView, 0);
-    ADDCMD("<c-w><up>", commandSwitchToUpView, 0);
-    ADDCMD("<c-w>l", commandSwitchToRightView, 0);
-    ADDCMD("<c-w><c-l>", commandSwitchToRightView, 0);
-    ADDCMD("<c-w><right>", commandSwitchToRightView, 0);
-    ADDCMD("<c-w>w", commandSwitchToNextView, 0);
-    ADDCMD("<c-w><c-w>", commandSwitchToNextView, 0);
+    // ADDCMD("<c-w>h", commandSwitchToLeftView, 0);
+    // ADDCMD("<c-w><c-h>", commandSwitchToLeftView, 0);
+    ADDCMD("<a-h>", commandSwitchToLeftView, 0);
+    // ADDCMD("<c-w><left>", commandSwitchToLeftView, 0);
+    // ADDCMD("<c-w>j", commandSwitchToDownView, 0);
+    // ADDCMD("<c-w><c-j>", commandSwitchToDownView, 0);
+    // ADDCMD("<c-w><down>", commandSwitchToDownView, 0);
+    // ADDCMD("<c-w>k", commandSwitchToUpView, 0);
+    // ADDCMD("<c-w><c-k>", commandSwitchToUpView, 0);
+    // ADDCMD("<c-w><up>", commandSwitchToUpView, 0);
+    // ADDCMD("<c-w>l", commandSwitchToRightView, 0);
+    ADDCMD("<a-l>", commandSwitchToRightView, 0);
+    // ADDCMD("<c-w><c-l>", commandSwitchToRightView, 0);
+    // ADDCMD("<c-w><right>", commandSwitchToRightView, 0);
+    // ADDCMD("<c-w>w", commandSwitchToNextView, 0);
+    // ADDCMD("<c-w><c-w>", commandSwitchToNextView, 0);
 
-    ADDCMD("<c-w>s", commandSplitHoriz, 0);
-    ADDCMD("<c-w>S", commandSplitHoriz, 0);
-    ADDCMD("<c-w><c-s>", commandSplitHoriz, 0);
-    ADDCMD("<c-w>v", commandSplitVert, 0);
-    ADDCMD("<c-w><c-v>", commandSplitVert, 0);
-    ADDCMD("<c-w>c", commandCloseView, 0);
+    ADDCMD("<c-x>2", commandSplitVert, 0);
+    ADDCMD("<c-x>3", commandSplitHoriz, 0);
+    // ADDCMD("<c-w>s", commandSplitHoriz, 0);
+    // ADDCMD("<c-w>S", commandSplitHoriz, 0);
+    // ADDCMD("<c-w><c-s>", commandSplitHoriz, 0);
+    // ADDCMD("<c-w>v", commandSplitVert, 0);
+    // ADDCMD("<c-w><c-v>", commandSplitVert, 0);
+    // ADDCMD("<c-w>c", commandCloseView, 0);
 
     ADDCMD("gt", commandSwitchToNextTab, 0);
     ADDCMD("gT", commandSwitchToPrevTab, 0);
@@ -3634,7 +3652,7 @@ void NormalViMode::initializeCommands()
     ADDMOTION("t.", motionToChar, REGEX_PATTERN);
     ADDMOTION("T.", motionToCharBackward, REGEX_PATTERN);
     ADDMOTION(";", motionRepeatlastTF, 0);
-    ADDMOTION(",", motionRepeatlastTFBackward, 0);
+    // ADDMOTION(",", motionRepeatlastTFBackward, 0);
     ADDMOTION("n", motionFindNext, 0);
     ADDMOTION("N", motionFindPrev, 0);
     ADDMOTION("gg", motionToLineFirst, 0);
@@ -3694,6 +3712,8 @@ void NormalViMode::initializeCommands()
     ADDMOTION("a[\\[\\]]", textObjectABracket, REGEX_PATTERN  | IS_NOT_LINEWISE);
     ADDMOTION("i,", textObjectInnerComma, IS_NOT_LINEWISE);
     ADDMOTION("a,", textObjectAComma, IS_NOT_LINEWISE);
+    ADDMOTION("il", textObjectInnerLine, 0);
+    ADDMOTION("al", textObjectALine, 0);
 
     ADDMOTION("/<enter>", motionToIncrementalSearchMatch, IS_NOT_LINEWISE);
     ADDMOTION("?<enter>", motionToIncrementalSearchMatch, IS_NOT_LINEWISE);
@@ -3954,6 +3974,14 @@ Range NormalViMode::textObjectComma(bool inner) const
     shrinkRangeAroundCursor(r, findSurroundingBrackets(QLatin1Char('('), QLatin1Char(','), inner, QLatin1Char('('), QLatin1Char(')')));
     shrinkRangeAroundCursor(r, findSurroundingBrackets(QLatin1Char('['), QLatin1Char(','), inner, QLatin1Char('['), QLatin1Char(']')));
     shrinkRangeAroundCursor(r, findSurroundingBrackets(QLatin1Char('{'), QLatin1Char(','), inner, QLatin1Char('{'), QLatin1Char('}')));
+    return r;
+}
+
+Range NormalViMode::textObjectLine(bool inner) const
+{
+    KTextEditor::Cursor c(m_view->cursorPosition());
+    int line = c.line();
+    Range r(line, 0, line, m_view->doc()->line(line).length() - inner, InclusiveMotion);
     return r;
 }
 

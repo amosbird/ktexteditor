@@ -104,7 +104,7 @@ bool InsertViMode::commandInsertFromBelow()
     return doc()->insertText(c, ch);
 }
 
-bool InsertViMode::commandDeleteWord()
+bool InsertViMode::commandDeleteWordBackward()
 {
     KTextEditor::Cursor c1(m_view->cursorPosition());
     KTextEditor::Cursor c2;
@@ -124,7 +124,47 @@ bool InsertViMode::commandDeleteWord()
     return deleteRange(r, CharWise, false);
 }
 
+bool InsertViMode::commandDeleteWord()
+{
+    KTextEditor::Cursor c1(m_view->cursorPosition());
+    KTextEditor::Cursor c2;
+
+    c2 = findNextWordStart(c1.line(), c1.column());
+
+    int line = doc()->line(c1.line()).length();
+
+    if (c2.line() != c1.line()) {
+        if (c1.column() == line) {
+            c2.setColumn(0);
+        } else {
+            c2.setColumn(line);
+            c2.setLine(c1.line());
+        }
+    }
+
+    Range r(c1, c2, ExclusiveMotion);
+    return deleteRange(r, CharWise, false);
+}
+
 bool InsertViMode::commandDeleteLine()
+{
+    KTextEditor::Cursor c(m_view->cursorPosition());
+    int eol = doc()->line(c.line()).length();
+    Range r(c.line(), c.column(), c.line(), eol, ExclusiveMotion);
+
+    if (c.column() == eol) {
+        // Try to move the next line to the end of the current line.
+        if (c.line() == doc()->lines()) {
+            return true;
+        } else {
+            r.endColumn = 0;
+            r.endLine++;
+        }
+    }
+    return deleteRange(r, CharWise, false);
+}
+
+bool InsertViMode::commandDeleteLineBackward()
 {
     KTextEditor::Cursor c(m_view->cursorPosition());
     Range r(c.line(), 0, c.line(), c.column(), ExclusiveMotion);
@@ -149,6 +189,22 @@ bool InsertViMode::commandDeleteLine()
         }
     }
     return deleteRange(r, CharWise, false);
+}
+
+bool InsertViMode::commandDeleteChar()
+{
+    KTextEditor::Cursor c(m_view->cursorPosition());
+    Range r(c.line(), c.column(), c.line(), c.column() + getCount(), ExclusiveMotion);
+
+    if (m_commandRange.startLine != -1 && m_commandRange.startColumn != -1) {
+        r = m_commandRange;
+    } else {
+        if (r.endColumn > doc()->lineLength(r.startLine)) {
+            r.endColumn = doc()->lineLength(r.startLine);
+        }
+    }
+
+    return deleteRange(r, CharWise);
 }
 
 bool InsertViMode::commandDeleteCharBackward()
@@ -317,6 +373,7 @@ bool InsertViMode::commandSwitchToNormalModeForJustOneCommand()
  */
 bool InsertViMode::handleKeypress(const QKeyEvent *e)
 {
+    KTextEditor::Cursor c(m_view->cursorPosition());
     // backspace should work even if the shift key is down
     if (e->modifiers() != Qt::ControlModifier && e->key() == Qt::Key_Backspace) {
         m_view->backspace();
@@ -359,6 +416,12 @@ bool InsertViMode::handleKeypress(const QKeyEvent *e)
             case Qt::Key_PageDown:
                 m_view->pageDown();
                 return true;
+            case Qt::Key_Comma:
+                m_view->doc()->insertText(c, QStringLiteral(","));
+                return true;
+            case Qt::Key_Space:
+                m_view->doc()->insertText(c, QStringLiteral(" "));
+                return true;
             case Qt::Key_Enter:
             case Qt::Key_Return:
                 if (m_view->completionWidget()->isCompletionActive() && !m_viInputModeManager->macroRecorder()->isReplaying() && !m_viInputModeManager->lastChangeRecorder()->isReplaying()) {
@@ -380,13 +443,31 @@ bool InsertViMode::handleKeypress(const QKeyEvent *e)
             default:
                 return false;
             }
+        } else if (e->modifiers() == Qt::AltModifier) {
+            switch (e->key()) {
+            case Qt::Key_BracketLeft:
+                commandDeleteWordBackward();
+                return true;
+            case Qt::Key_B:
+                m_view->wordLeft();
+                return true;
+            case Qt::Key_F:
+                m_view->wordRight();
+                return true;
+            case Qt::Key_D:
+                commandDeleteWord();
+                return true;
+            case Qt::Key_K:
+                commandDeleteLine();
+                return true;
+            }
         } else if (e->modifiers() == Qt::ControlModifier) {
             switch (e->key()) {
             case Qt::Key_BracketLeft:
             case Qt::Key_3:
                 leaveInsertMode();
                 return true;
-            case Qt::Key_Space:
+            case Qt::Key_Enter:
                 // We use Ctrl-space as a special code in macros/ last change, which means: if replaying
                 // a macro/ last change, fetch and execute the next completion for this macro/ last change ...
                 if (!m_viInputModeManager->macroRecorder()->isReplaying() && !m_viInputModeManager->lastChangeRecorder()->isReplaying()) {
@@ -397,36 +478,62 @@ bool InsertViMode::handleKeypress(const QKeyEvent *e)
                     m_viInputModeManager->completionReplayer()->replay();
                 }
                 return true;
+            case Qt::Key_A:
+                m_view->home();
+                return true;
+            case Qt::Key_B:
+                m_view->cursorLeft();
+                return true;
             case Qt::Key_C:
                 leaveInsertMode(true);
                 return true;
             case Qt::Key_D:
-                commandUnindent();
+                commandDeleteChar();
                 return true;
             case Qt::Key_E:
-                commandInsertFromBelow();
+                m_view->end();
+                return true;
+            case Qt::Key_F:
+                m_view->cursorRight();
                 return true;
             case Qt::Key_N:
+                m_view->down();
+                return true;
+            case Qt::Key_P:
+                m_view->up();
+                return true;
+            case Qt::Key_J:
                 if (!m_viInputModeManager->macroRecorder()->isReplaying()) {
                     commandCompleteNext();
                 }
                 return true;
-            case Qt::Key_P:
+            case Qt::Key_K:
                 if (!m_viInputModeManager->macroRecorder()->isReplaying()) {
                     commandCompletePrevious();
+                }
+                return true;
+            case Qt::Key_L:
+                if (m_view->completionWidget()->isCompletionActive() && !m_viInputModeManager->macroRecorder()->isReplaying() && !m_viInputModeManager->lastChangeRecorder()->isReplaying()) {
+                    // Filter out Enter/ Return's that trigger a completion when recording macros/ last change stuff; they
+                    // will be replaced with the special code "ctrl-space".
+                    // (This is why there is a "!m_viInputModeManager->isReplayingMacro()" above.)
+                    m_viInputModeManager->doNotLogCurrentKeypress();
+
+                    m_isExecutingCompletion = true;
+                    m_textInsertedByCompletion.clear();
+                    m_view->completionWidget()->execute();
+                    completionFinished();
+                    m_isExecutingCompletion = false;
                 }
                 return true;
             case Qt::Key_T:
                 commandIndent();
                 return true;
             case Qt::Key_W:
-                commandDeleteWord();
+                commandDeleteWordBackward();
                 return true;
             case Qt::Key_U:
-                return commandDeleteLine();
-            case Qt::Key_J:
-                commandNewLine();
-                return true;
+                return commandDeleteLineBackward();
             case Qt::Key_H:
                 commandDeleteCharBackward();
                 return true;

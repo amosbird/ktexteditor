@@ -186,6 +186,7 @@ public:
     bool commandStartRecordingMacro();
     bool commandReplayMacro();
 
+    bool commandWrite();
     bool commandCloseWrite();
     bool commandCloseNocheck();
 
@@ -295,6 +296,9 @@ public:
     Range textObjectAComma();
     Range textObjectInnerComma();
 
+    Range textObjectALine();
+    Range textObjectInnerLine();
+
     virtual void reset();
 
     void beginMonitoringDocumentChanges();
@@ -328,6 +332,7 @@ protected:
      */
     int getFirstNonBlank(int line = -1) const;
 
+    Range textObjectLine(bool inner) const;
     Range textObjectComma(bool inner) const;
     void shrinkRangeAroundCursor(Range &toShrink, const Range &rangeToShrinkTo) const;
     KTextEditor::Cursor findSentenceStart();

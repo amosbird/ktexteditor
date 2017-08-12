@@ -257,7 +257,7 @@ bool KateColorTreeWidget::edit(const QModelIndex &index, EditTrigger trigger, QE
     bool accept = false;
     if (event && event->type() == QEvent::KeyPress) {
         QKeyEvent *ke = static_cast<QKeyEvent *>(event);
-        accept = (ke->key() == Qt::Key_Space); // allow Space to edit
+        accept = (ke->key() == Qt::Key_Enter); // allow Space to edit
     }
 
     switch (trigger) {

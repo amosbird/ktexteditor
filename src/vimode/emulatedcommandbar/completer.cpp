@@ -95,7 +95,7 @@ bool Completer::completerHandledKeypress ( const QKeyEvent* keyEvent )
             return true;
         }
     }
-    if (keyEvent->modifiers() == Qt::ControlModifier && keyEvent->key() == Qt::Key_Space) {
+    if (keyEvent->modifiers() == Qt::ControlModifier && keyEvent->key() == Qt::Key_Enter) {
         CompletionStartParams completionStartParams = activateWordFromDocumentCompletion();
         startCompletion(completionStartParams);
         return true;
