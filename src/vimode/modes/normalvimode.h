@@ -119,6 +119,7 @@ public:
     bool commandSearchBackward();
     bool commandSearchForward();
     bool commandUndo();
+    bool commandUndoAll();
     bool commandRedo();
 
     bool commandSetMark();

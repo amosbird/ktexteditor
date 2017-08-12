@@ -1489,6 +1489,15 @@ bool NormalViMode::commandUndo()
     return false;
 }
 
+bool NormalViMode::commandUndoAll()
+{
+    bool ret = true;
+    while (doc()->undoCount() > 0 && ret) {
+        ret &= commandUndo();
+    }
+    return ret;
+}
+
 bool NormalViMode::commandRedo()
 {
     if (doc()->redoCount() > 0) {
@@ -3555,7 +3564,7 @@ void NormalViMode::initializeCommands()
     ADDCMD(":", commandSwitchToCmdLine, 0);
     ADDCMD("u", commandUndo, 0);
     ADDCMD("<c-r>", commandRedo, 0);
-    ADDCMD("U", commandRedo, 0);
+    ADDCMD("U", commandUndoAll, 0);
     ADDCMD("m.", commandSetMark, REGEX_PATTERN);
     ADDCMD(">>", commandIndentLine, IS_CHANGE);
     ADDCMD("<<", commandUnindentLine, IS_CHANGE);
