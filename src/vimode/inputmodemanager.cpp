@@ -123,7 +123,7 @@ bool InputModeManager::handleKeypress(const QKeyEvent *e)
     }
 
     if (!m_lastChangeRecorder->isReplaying() && !isSyntheticSearchCompletedKeyPress) {
-        if (e->key() == Qt::Key_AltGr) {
+        if (e->key() == Qt::Key_AltGr || e->key() == Qt::Key_Mode_switch) {
             return true; // do nothing
         }
 

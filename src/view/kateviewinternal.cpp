@@ -3128,6 +3128,7 @@ void KateViewInternal::focusInEvent(QFocusEvent *)
         m_cursorTimer.start(QApplication::cursorFlashTime() / 2);
     }
 
+    m_view->renderer()->setDrawCaret(true);
     paintCursor();
 
     doc()->setActiveView(m_view);
@@ -3142,7 +3143,7 @@ void KateViewInternal::focusOutEvent(QFocusEvent *)
     //m_view->abortCompletion();
 
     m_cursorTimer.stop();
-    m_view->renderer()->setDrawCaret(true);
+    m_view->renderer()->setDrawCaret(false);
     paintCursor();
 
     m_textHintTimer.stop();

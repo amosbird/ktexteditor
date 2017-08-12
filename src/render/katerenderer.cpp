@@ -51,7 +51,7 @@ KateRenderer::KateRenderer(KTextEditor::DocumentPrivate *doc, Kate::TextFolding 
     , m_tabWidth(m_doc->config()->tabWidth())
     , m_indentWidth(m_doc->config()->indentationWidth())
     , m_caretStyle(KateRenderer::Line)
-    , m_drawCaret(true)
+    , m_drawCaret(false)
     , m_showSelections(true)
     , m_showTabs(true)
     , m_showSpaces(true)
