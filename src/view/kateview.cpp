@@ -576,7 +576,7 @@ void KTextEditor::ViewPrivate::setupActions()
         a = ac->addAction(QStringLiteral("tools_invoke_code_completion"));
         a->setText(i18n("Invoke Code Completion"));
         a->setWhatsThis(i18n("Manually invoke command completion, usually by using a shortcut bound to this action."));
-        ac->setDefaultShortcut(a, QKeySequence(Qt::CTRL + Qt::Key_Space));
+        ac->setDefaultShortcut(a, QKeySequence(Qt::CTRL + Qt::Key_Enter));
         connect(a, SIGNAL(triggered(bool)), SLOT(userInvokedCompletion()));
     } else {
         m_cut->setEnabled(false);

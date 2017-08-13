@@ -375,7 +375,7 @@ bool InsertViMode::handleKeypress(const QKeyEvent *e)
 {
     KTextEditor::Cursor c(m_view->cursorPosition());
     // backspace should work even if the shift key is down
-    if (e->modifiers() != Qt::ControlModifier && e->key() == Qt::Key_Backspace) {
+    if (e->modifiers() != Qt::ControlModifier && e->modifiers() != Qt::AltModifier && e->key() == Qt::Key_Backspace) {
         m_view->backspace();
         return true;
     }

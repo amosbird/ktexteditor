@@ -3590,8 +3590,8 @@ void NormalViMode::initializeCommands()
     ADDCMD("~", commandChangeCase, IS_CHANGE);
     ADDCMD("g~", commandChangeCaseRange, IS_CHANGE | NEEDS_MOTION);
     ADDCMD("g~~", commandChangeCaseLine, IS_CHANGE);
-    ADDCMD("<c-o>", commandGoToPrevJump, 0);
-    ADDCMD("<c-i>", commandGoToNextJump, 0);
+    // ADDCMD("<c-o>", commandGoToPrevJump, 0);
+    // ADDCMD("<c-i>", commandGoToNextJump, 0);
 
     // ADDCMD("<c-w>h", commandSwitchToLeftView, 0);
     // ADDCMD("<c-w><c-h>", commandSwitchToLeftView, 0);
@@ -3610,8 +3610,8 @@ void NormalViMode::initializeCommands()
     // ADDCMD("<c-w>w", commandSwitchToNextView, 0);
     // ADDCMD("<c-w><c-w>", commandSwitchToNextView, 0);
 
-    ADDCMD("<c-x>2", commandSplitVert, 0);
-    ADDCMD("<c-x>3", commandSplitHoriz, 0);
+    ADDCMD("<c-x>v", commandSplitVert, 0);
+    ADDCMD("<c-x>h", commandSplitHoriz, 0);
     // ADDCMD("<c-w>s", commandSplitHoriz, 0);
     // ADDCMD("<c-w>S", commandSplitHoriz, 0);
     // ADDCMD("<c-w><c-s>", commandSplitHoriz, 0);
@@ -3650,7 +3650,7 @@ void NormalViMode::initializeCommands()
     ADDMOTION("-", motionUpToFirstNonBlank, 0);
     ADDMOTION("l", motionRight, 0);
     ADDMOTION("<right>", motionRight, 0);
-    ADDMOTION(" ", motionRight, 0);
+    // ADDMOTION(" ", motionRight, 0);
     ADDMOTION("$", motionToEOL, 0);
     ADDMOTION("<end>", motionToEOL, 0);
     ADDMOTION("0", motionToColumn0, 0);
@@ -3680,10 +3680,12 @@ void NormalViMode::initializeCommands()
     ADDMOTION("%", motionToMatchingItem, IS_NOT_LINEWISE);
     ADDMOTION("`[a-zA-Z^><\\.\\[\\]]", motionToMark, REGEX_PATTERN);
     ADDMOTION("'[a-zA-Z^><]", motionToMarkLine, REGEX_PATTERN);
-    ADDMOTION("[[", motionToPreviousBraceBlockStart, IS_NOT_LINEWISE);
-    ADDMOTION("]]", motionToNextBraceBlockStart, IS_NOT_LINEWISE);
-    ADDMOTION("[]", motionToPreviousBraceBlockEnd, IS_NOT_LINEWISE);
-    ADDMOTION("][", motionToNextBraceBlockEnd, IS_NOT_LINEWISE);
+    ADDMOTION("[", motionToPreviousBraceBlockStart, IS_NOT_LINEWISE);
+    ADDMOTION("]", motionToNextBraceBlockStart, IS_NOT_LINEWISE);
+    // ADDMOTION("[[", motionToPreviousBraceBlockStart, IS_NOT_LINEWISE);
+    // ADDMOTION("]]", motionToNextBraceBlockStart, IS_NOT_LINEWISE);
+    // ADDMOTION("[]", motionToPreviousBraceBlockEnd, IS_NOT_LINEWISE);
+    // ADDMOTION("][", motionToNextBraceBlockEnd, IS_NOT_LINEWISE);
     ADDMOTION("*", motionToNextOccurrence, 0);
     ADDMOTION("#", motionToPrevOccurrence, 0);
     ADDMOTION("H", motionToFirstLineOfWindow, 0);
@@ -3787,7 +3789,7 @@ bool NormalViMode::paste(PasteLocation pasteLocation, bool isgPaste, bool isInde
 {
     KTextEditor::Cursor pasteAt(m_view->cursorPosition());
     KTextEditor::Cursor cursorAfterPaste = pasteAt;
-    QChar reg = getChosenRegister(UnnamedRegister);
+    QChar reg = getChosenRegister(SystemClipboardRegister);
 
     OperationMode m = getRegisterFlag(reg);
     QString textToInsert = getRegisterContent(reg);

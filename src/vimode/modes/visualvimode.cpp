@@ -335,7 +335,7 @@ void VisualViMode::initializeCommands()
     ADDMOTION("<up>", motionUp, 0);
     ADDMOTION("l", motionRight, 0);
     ADDMOTION("<right>", motionRight, 0);
-    ADDMOTION(" ", motionRight, 0);
+    // ADDMOTION(" ", motionRight, 0);
     ADDMOTION("$", motionToEOL, 0);
     ADDMOTION("<end>", motionToEOL, 0);
     ADDMOTION("0", motionToColumn0, 0);

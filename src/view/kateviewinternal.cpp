@@ -2369,16 +2369,16 @@ void KateViewInternal::keyPressEvent(QKeyEvent *e)
         e->setAccepted(true);
         return;
     }
-    if (e->key() == Qt::Key_Return && e->modifiers() == Qt::AltModifier) {
-        m_view->emitNavigateAccept();
-        e->setAccepted(true);
-        return;
-    }
-    if (e->key() == Qt::Key_Backspace && e->modifiers() == Qt::AltModifier) {
-        m_view->emitNavigateBack();
-        e->setAccepted(true);
-        return;
-    }
+    // if (e->key() == Qt::Key_Return && e->modifiers() == Qt::AltModifier) {
+    //     m_view->emitNavigateAccept();
+    //     e->setAccepted(true);
+    //     return;
+    // }
+    // if (e->key() == Qt::Key_Backspace && e->modifiers() == Qt::AltModifier) {
+    //     m_view->emitNavigateBack();
+    //     e->setAccepted(true);
+    //     return;
+    // }
 
     if (e->key() == Qt::Key_Alt && m_view->completionWidget()->isCompletionActive()) {
         m_completionItemExpanded = m_view->completionWidget()->toggleExpanded(true);
