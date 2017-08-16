@@ -3789,7 +3789,7 @@ bool NormalViMode::paste(PasteLocation pasteLocation, bool isgPaste, bool isInde
 {
     KTextEditor::Cursor pasteAt(m_view->cursorPosition());
     KTextEditor::Cursor cursorAfterPaste = pasteAt;
-    QChar reg = getChosenRegister(SystemClipboardRegister);
+    QChar reg = getChosenRegister(UnnamedRegister);
 
     OperationMode m = getRegisterFlag(reg);
     QString textToInsert = getRegisterContent(reg);
